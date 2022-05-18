@@ -1,0 +1,182 @@
+{% extends 'store/base.html' %}
+{% load custom_tags %}
+
+{% load static %}
+{% block content %}
+
+
+    <style>
+    a:hover {
+        text-decoration: None;
+    }
+
+    a {
+        color: black;
+    }
+     .img1{
+      height: 350px;
+      width: 50%;
+    }
+    .img2{
+      height: 350px;
+      width: 50%;
+    }
+    .img3{
+      height: 350px;
+      width: 50%;
+    }
+
+    .navbar a {
+        color: white;
+        }
+           p, h5{
+      color: white;
+    }
+    .card{
+      top: 50px;
+    }
+
+     label{
+       color: red;
+       padding-top: 15px;
+       font-weight: bolder;
+       font-style: italic;
+      }
+      label:hover{
+        color: black;
+        border: 3px solid black;
+        position: relative;
+
+      }
+     option{
+       color: red;
+     }
+     stateSelect{
+       color: red;
+     }
+     td,a{
+      color: black;
+     }
+</style>
+<br>
+<br>
+ <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+     <img class="d-block w-100 img1" src="{% static 'images/covid1.png' %}" alt="First slide">
+    </div>
+    <div class="carousel-item">
+      <img class="d-block w-100 img2" src="{% static 'images/covid2.png' %}" alt="Second slide">
+    </div>
+    <div class="carousel-item">
+      <img class="d-block w-100 img3" src="{% static 'images/covid3.png'%}" alt="Third slide">
+    </div>
+  </div>
+  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+    <div>
+        <form id="filterform" action="" method="GET">
+            <div class="row">
+        <div class="col">
+        <div class="form-group">
+    <label >Select State</label>
+    <select name="state" id="stateSelect" class="form-control">
+      <option value="">Select State</option>
+        {% for state in states %}
+      <option {% is_option_selected selected_state_id state.pk %} value="{{state.pk}}">{{state}}</option>
+        {%endfor%}
+    </select>
+  </div>
+    </div>
+        <div class="col">
+             <div class="form-group">
+    <label >Select City</label>
+    <select name="city" class="form-control" id="citySelect">
+      <option value="">Select Cites</option>
+        {% for city in cities %}
+      <option {% is_option_selected selected_city_id city.pk %} value="{{city.pk}}">
+          {{city.name}}</option>
+        {%endfor%}
+    </select>
+  </div>
+        </div>
+                 <div class="col">
+             <div class="form-group">
+    <label >Select Facility</label>
+    <select name="facility" class="form-control" id="facilitySelect">
+      <option value="">Select Facility</option>
+        {% for facility in facilities %}
+      <option {% is_option_selected selected_facility_id facility.pk %} value="{{facility.pk}}">
+          {{facility.title}}</option>
+        {%endfor%}
+    </select>
+  </div>
+        </div>
+
+    </div>
+            <div>
+                <a href="/" class="btn btn-primary">Reset</a>
+            </div>
+            <hr>
+        </form>
+    </div>
+    <hr>
+    <table class="table text-center table-bordered tabled-stripedf">
+        <thead class="thead-light">
+        <tr>
+            <th rowspan="2">Hospital</th>
+            {% for facility in facilities %}
+            <th colspan="2" class="text-center">{{facility.title}}</th>
+            {% endfor %}
+        </tr>
+         <tr>
+             {% for facility in facilities %}
+            <th>Available</th>
+               <th>Total</th>
+             {% endfor %}
+
+        </tr>
+
+        </thead>
+        <tbody>
+       {% for hospital in hospitals %}
+        <tr>
+            <td><a href="/hospital/{{hospital.id}}">{{hospital.name}}</a></td>
+
+            {% get_availibilities hospital as availibilities %}
+
+            {% for avl in availibilities %}
+            <td class='{%get_table_class avl.available%}'>{{avl.available}}</td>
+             <td>{{avl.total}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+    </table>
+
+
+<script>
+    window.onload = function() {
+     var stateSelect = document.getElementById('stateSelect')
+     var citySelect = document.getElementById('citySelect')
+     var form = document.getElementById('filterform')
+     var facilitySelect = document.getElementById('facilitySelect')
+     var formSubmit = function() {
+          form.submit();
+          }
+     stateSelect.onchange = formSubmit
+     citySelect.onchange = formSubmit
+     facilitySelect.onchange = formSubmit
+    }
+</script>
+{%endblock%}
